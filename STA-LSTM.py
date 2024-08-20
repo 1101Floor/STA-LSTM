@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-#评价函数
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import r2_score
@@ -34,22 +33,12 @@ warnings.filterwarnings('ignore')
 
 
 def mape(y_true, y_pred):
-    """
-    参数:
-    y_true -- 测试集目标真实值
-    y_pred -- 测试集目标预测值
-
-    返回:
-    mape -- MAPE 评价指标
-    """
-
     n = len(y_true)
     mape = sum(np.abs((y_true - y_pred) / y_true)) / n * 100
     return mape
 
 
 def easy_result(y_train, y_train_predict, train_index, model_index, col_index):
-    # 画图进行展示
     plt.figure(figsize=(10, 5))
     plt.plot(y_train[:])
     plt.plot(y_train_predict[:])
@@ -63,10 +52,8 @@ def easy_result(y_train, y_train_predict, train_index, model_index, col_index):
     plt.figure(figsize=(5, 5))
     plt.plot(plot_x, plot_x)
     plt.plot(y_train, y_train_predict, 'o')
-    plt.title("%s Data" % train_index, fontsize='20')  # 添加标题
+    plt.title("%s Data" % train_index, fontsize='20')
     plt.show()
-
-    # 输出结果
     print('%s上的MAE/RMSE/MAPE/R^2' % train_index)
     print(mean_absolute_error(y_train, y_train_predict))
     print(np.sqrt(mean_squared_error(y_train, y_train_predict)))
@@ -79,7 +66,7 @@ def easy_result(y_train, y_train_predict, train_index, model_index, col_index):
         y_train, y_train_predict), r2_score(y_train, y_train_predict)
 
 
-data_1 = df = pd.read_csv('C:/Users/DELL/Desktop/画图/1.csv').iloc[:, 2:6]
+data_1 = df = pd.read_csv('1.csv').iloc[:, 2:6]
 data_21 = data_1.iloc[:, [1, 2, 3]]
 data_22 = data_1.iloc[:, [0, 2, 3]]
 data_23 = data_21.iloc[:, 0:1]
@@ -143,8 +130,8 @@ Lon_in1 = mm_x.fit_transform(Lon_in)
 Lat_in1 = mm_y.fit_transform(Lat_in)
 Lon_out1 = mm_z1.fit_transform(Lon_out)
 Lat_out1 = mm_z2.fit_transform(Lat_out)
-np.savetxt('C:/Users/DELL/Desktop/画图/test1_2_5.txt', z, fmt='%d')
-G = nx.read_edgelist('C:/Users/DELL/Desktop/画图/test1_2_5.txt', create_using=nx.DiGraph(), nodetype=None,
+np.savetxt('test1_2_5.txt', z, fmt='%d')
+G = nx.read_edgelist('test1_2_5.txt', create_using=nx.DiGraph(), nodetype=None,
                      data=[('weight', int)])
 
 
@@ -165,10 +152,10 @@ class RandomWalker:
         walk = [start_node]
 
         while len(walk) < walk_length:
-            cur = walk[-1]  # 当前序列的最后一个值
-            cur_nbrs = list(self.G.neighbors(cur))  # 获取所有的邻居节点
+            cur = walk[-1] 
+            cur_nbrs = list(self.G.neighbors(cur)) 
             if len(cur_nbrs) > 0:
-                walk.append(random.choice(cur_nbrs))  # 随机选择一个邻居节点加入队列
+                walk.append(random.choice(cur_nbrs)) 
             else:
                 break
         return walk
@@ -278,22 +265,22 @@ def  attention_3d_block(inputs,SINGLE_ATTENTION_VECTOR  =  False):
     input_dim =  int(inputs.shape[1]) # shape = (batch_size, time_steps, input_dim)
     a = Permute((2, 1))(inputs) # shape = (batch_size, input_dim, time_steps)
     #a = Reshape((input_dim, 3))(a) # this line is not useful. It's just to know which dimension is what.
-    a_probs = tf.keras.layers.Dense(10, activation='softmax', name='attention_vec')(a)# 为了让输出的维数和时间序列数相同（这样才能生成各个时间点的注意力值）
+    a_probs = tf.keras.layers.Dense(10, activation='softmax', name='attention_vec')(a)
     #a_probs= tf.sigmoid(a)
     #a_probs= layers.Softmax(a)
     #a_probs = Permute((2, 1), name='attention_vec')(a) # shape = (batch_size, time_steps, input_dim)
-    output_attention_mul = Multiply()([a_probs,a]) #把注意力值和输入按位相乘，权重乘以输入
+    output_attention_mul = Multiply()([a_probs,a])
     return output_attention_mul
 def  attention_3d_block1(inputs,SINGLE_ATTENTION_VECTOR  =  False):
     input_dim =  int(inputs.shape[1]) # shape = (batch_size, time_steps, input_dim)
     a = Permute((2, 1))(inputs) # shape = (batch_size, input_dim, time_steps)
     #a = Reshape((input_dim, 10))(a) # this line is not useful. It's just to know which dimension is what.
-    a = tf.keras.layers.Dense(3, activation='softmax')(a)# 为了让输出的维数和时间序列数相同（这样才能生成各个时间点的注意力值）
+    a = tf.keras.layers.Dense(3, activation='softmax')(a)
     #a_probs= layers.ReLU(a)
     #a_probs= layers.Softmax(a)
     a_probs = Permute((2, 1), name='attention_vec1')(a) # shape = (batch_size, time_steps, input_dim)
     #output_attention_mul = K.batch_dot(a_probs,inputs)
-    output_attention_mul = tf.keras.layers.Dot(axes=(2, 2))([inputs, a_probs]) #把注意力值和输入按位相乘，权重乘以输入
+    output_attention_mul = tf.keras.layers.Dot(axes=(2, 2))([inputs, a_probs])
     output_attention_mul = reduce_sum(output_attention_mul,axis=1)
     return output_attention_mul
 def  model_attention_applied_before_lstm(inputs):
@@ -327,7 +314,6 @@ history = model.fit(x_train,
                       validation_split=0.1,
                       shuffle=False,
                       callbacks=[early_stopping])
-    #迭代图像
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 epochs_range = range(len(loss))
@@ -353,22 +339,22 @@ def  attention_3d_block(inputs,SINGLE_ATTENTION_VECTOR  =  False):
     input_dim =  int(inputs.shape[1]) # shape = (batch_size, time_steps, input_dim)
     #a = Permute((2, 1))(inputs) # shape = (batch_size, input_dim, time_steps)
     a = Reshape((input_dim, 3))(inputs) # this line is not useful. It's just to know which dimension is what.
-    a_probs = tf.keras.layers.Dense(3, activation='softmax', name='attention_vec')(a)# 为了让输出的维数和时间序列数相同（这样才能生成各个时间点的注意力值）
+    a_probs = tf.keras.layers.Dense(3, activation='softmax', name='attention_vec')(a)
     #a_probs= tf.sigmoid(a)
     #a_probs= layers.Softmax(a)
     #a_probs = Permute((2, 1), name='attention_vec')(a) # shape = (batch_size, time_steps, input_dim)
-    output_attention_mul = Multiply()([inputs, a_probs]) #把注意力值和输入按位相乘，权重乘以输入
+    output_attention_mul = Multiply()([inputs, a_probs]) 
     return output_attention_mul
 def  attention_3d_block1(inputs,SINGLE_ATTENTION_VECTOR  =  False):
     input_dim =  int(inputs.shape[2]) # shape = (batch_size, time_steps, input_dim)
     a = Permute((2, 1))(inputs) # shape = (batch_size, input_dim, time_steps)
     a = Reshape((input_dim, 10))(a) # this line is not useful. It's just to know which dimension is what.
-    a = tf.keras.layers.Dense(10, activation='softmax')(a)# 为了让输出的维数和时间序列数相同（这样才能生成各个时间点的注意力值）
+    a = tf.keras.layers.Dense(10, activation='softmax')(a)
     #a_probs= layers.ReLU(a)
     #a_probs= layers.Softmax(a)
     a_probs = Permute((2, 1), name='attention_vec1')(a) # shape = (batch_size, time_steps, input_dim)
     #output_attention_mul = K.batch_dot(a_probs,inputs)
-    output_attention_mul = Multiply()([inputs, a_probs]) #把注意力值和输入按位相乘，权重乘以输入
+    output_attention_mul = Multiply()([inputs, a_probs])
     output_attention_mul = reduce_sum(output_attention_mul,axis=1)
     return output_attention_mul
 def  model_attention_applied_before_lstm(inputs):
@@ -391,7 +377,7 @@ model = Model(input_data,label_data)
 model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
 model.summary()
 from tensorflow.keras.utils import plot_model
-plot_model(model, to_file='.\model.png') #保存模型结构图片
+plot_model(model, to_file='.\model.png')
 from keras.callbacks import EarlyStopping
 early_stopping = EarlyStopping(monitor='val_loss', patience=100, verbose=2)
 history = model.fit(x_train1,
@@ -402,7 +388,6 @@ history = model.fit(x_train1,
                       validation_split=0.1,
                       shuffle=False,
                       callbacks=[early_stopping])
-    #迭代图像
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 epochs_range = range(len(loss))
@@ -412,7 +397,7 @@ plt.legend(loc='upper right')
 plt.title('Train and Val Loss')
 plt.show()
 
-y_test_predict1=model.predict(x_test1)#预测结果
+y_test_predict1=model.predict(x_test1)
 y_test_predict1= mm_z2.inverse_transform(y_test_predict1)
 y_test_inverse1=mm_z2.inverse_transform(y_test1)
 easy_result(y_test_inverse1[:,0], y_test_predict1[:,0], 'Train', 'TransF', 'longitude')
@@ -421,8 +406,8 @@ easy_result(y_test_inverse1[:,2], y_test_predict1[:,2], 'Train', 'TransF', 'long
 easy_result(y_test_inverse1[:,3], y_test_predict1[:,3], 'Train', 'TransF', 'longitude')
 
 def get_ade(forecasted_trajectory_Lon,forecasted_trajectory_Lat,gt_trajectory_Lon,gt_trajectory_Lat):
-    pred_len = forecasted_trajectory_Lon.shape[0] #预测单条轨迹的行数==每个轨迹包含轨迹点的个数
-    ade = float(  #单条轨迹中所有轨迹点坐标与真值的欧氏距离的平均值
+    pred_len = forecasted_trajectory_Lon.shape[0]
+    ade = float(
         sum(
             math.sqrt(
                 (forecasted_trajectory_Lon[i] - gt_trajectory_Lon[i]) ** 2
@@ -435,7 +420,7 @@ def get_ade(forecasted_trajectory_Lon,forecasted_trajectory_Lat,gt_trajectory_Lo
     return ade
 def get_fde(forecasted_trajectory_Lon,forecasted_trajectory_Lat,gt_trajectory_Lon,gt_trajectory_Lat):
 
-    fde = math.sqrt( #单条轨迹中最后一个轨迹点坐标与真值的欧氏距离
+    fde = math.sqrt(
         (forecasted_trajectory_Lon[-1] - gt_trajectory_Lon[-1]) ** 2
         + (forecasted_trajectory_Lat[-1] - gt_trajectory_Lat[-1]) ** 2
     )
